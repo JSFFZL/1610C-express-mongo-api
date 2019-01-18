@@ -10,7 +10,7 @@ router.get('/api/getBill', function(req, res, next) {
     if(err){
       return res.json({code:0,data:err})
     }else{
-      return res.json({code:1,data:result})
+      return res.json({code:1,data:result,msg:'查询成功'})
     }
   })
 });
@@ -123,11 +123,8 @@ router.post('/api/getVagueTimeBill', function(req, res, next) {
       }else{
         return res.json({code:0,data:"没有此用户！"})
       }
-      
     }
   })
-  
-  
  });
 
  //修改数据
@@ -153,9 +150,7 @@ router.post('/api/getVagueTimeBill', function(req, res, next) {
 
  //删除数据
  router.post('/api/deleteBill', function(req, res, next) {
- 
   var id = req.body.id;
-
   if(!id){
     return res.json({code:0,data:'参数丢失'})
   }
@@ -167,6 +162,25 @@ router.post('/api/getVagueTimeBill', function(req, res, next) {
     }
   })
  });
+
+ 
+//分页（上拉加载）
+router.post('/api/getScoll', function(req, res, next) {
+  var page = req.body.page; //页数
+  var len = req.body.len;//条数
+  mymongo.find('bill_list',function(err,result){
+    if(err){
+      return res.json({code:0,data:err})
+    }else{
+      return res.json({code:1,data:result.slice((page - 1) * len , page * len) })
+    }
+  })
+ });
+
+
+
+ //
+ //limit() ,skip()
 
 
 
