@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mymongo = require('mymongo1610');
+var mongoClient = require('mongodb').MongoClient;
+
 
 /* GET home page. */
 
@@ -179,9 +181,45 @@ router.post('/api/getScoll', function(req, res, next) {
 
 
 
- //
+ //上拉加载的分页
  //limit() ,skip()
+ router.post('/api/getSkipScoll', function(req, res, next) {
+  var page = req.body.page; //页数
+  var len = req.body.len;//条数
+  mongoClient.connect("mongodb://localhost:27017",{useNewUrlParser:true},function(err,con){
+    if(err){
+      throw err
+    }
+    var db = con.db('1610C');
+    var collection = db.collection('bill_list');
+    collection.find().skip((page - 1) * len).limit(len * 1).sort({'intro':1}).toArray(function(err,result){
+        if(err){
+          throw err
+        }else{
+          return res.json({code:1,data:result})
+        }
+    })
+  })
+ });
 
-
+ //倒序排列
+ router.post('/api/getSort', function(req, res, next) {
+  var page = req.body.page; //页数
+  var len = req.body.len;//条数
+  mongoClient.connect("mongodb://localhost:27017",{useNewUrlParser:true},function(err,con){
+    if(err){
+      throw err
+    }
+    var db = con.db('1610C');
+    var collection = db.collection('bill_list');
+    collection.find().sort({'money':1}).toArray(function(err,result){
+        if(err){
+          throw err
+        }else{
+          return res.json({code:1,data:result})
+        }
+    })
+  })
+ });
 
 module.exports = router;
